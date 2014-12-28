@@ -1,0 +1,8 @@
+shell/*       /usr/lib/shell
+etc/*         /etc  
+sbin/*        /sbin
+changelog.gz  /usr/share/doc/fbsplash-antix
+copyright     /usr/share/doc/fbsplash-antix
+fbres         /usr/local/bin
+splash-select /usr/local/bin 
+splash-select.1 /usr/local/share/man/man1 
