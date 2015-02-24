@@ -9,7 +9,7 @@ TERM_LIST=${1:-2:antiX-blue-purple 3:antiX-rev-neutral 4:antiX-purple 5:antiX-re
 for term_theme in $TERM_LIST $*; do
     term=$(echo $term_theme  | cut -d: -f1)
     theme=$(echo $term_theme | cut -d: -f2)
-    splash-term $term $theme &>> /var/log/spash-all.log
+    splash-term $term $theme &>> /var/log/splash-all.log
 done
 
 exit 0
