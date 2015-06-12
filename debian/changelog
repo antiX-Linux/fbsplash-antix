@@ -1,3 +1,18 @@
+fbsplash-antix (0.1.6) unstable; urgency=low
+ 
+  * Disable splash-all if there is no splash boot parmameter in splash-term 
+  * New /etc/udev/rules.d/90-fbcondecor.rules file
+
+ -- anticapitalista <antiX@operamail.com>  Sun, 19 Apr 2015 20:06:00 +0200
+
+
+fbsplash-antix (0.1.5) unstable; urgency=low
+ 
+  * Added fstab auto-stuff after udev has run for antiX-15
+
+ -- anticapitalista <antiX@operamail.com>  Wed, 01 Apr 2015 16:57:00 +0200
+
+
 fbsplash-antix (0.1.4) unstable; urgency=low
  
   * Changes to splash files.
