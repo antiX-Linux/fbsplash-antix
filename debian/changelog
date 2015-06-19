@@ -1,3 +1,11 @@
+fbsplash-antix (0.2.0) unstable; urgency=low
+ 
+  * Ready fo ship in antiX-15
+  * Fix --auto mode so it doesn't run if framebuffer is still VESA 
+
+ -- anticapitalista <antiX@operamail.com>  Tue, 16 Jun 2015 13:09:00 +0200
+
+
 fbsplash-antix (0.1.6) unstable; urgency=low
  
   * Disable splash-all if there is no splash boot parmameter in splash-term 

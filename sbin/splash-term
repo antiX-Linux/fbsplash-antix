@@ -73,6 +73,15 @@ set_splash() {
 }
 
 do_auto_mode() {
+
+    local fb_name fb_name_file=/sys/class/graphics/fb0/name
+    test -e $fb_name_file || exit 0
+    read fb_name 2>/dev/null < $fb_name_file
+
+    case $fb_name in
+      "VESA VGA") exit 0 ;;
+    esac
+
     read_splash_param
     [ "$SPLASH" ]  || exit 0
     set_splash 1 ${THEME:-default} >> $LOG_FILE
