@@ -1,6 +1,20 @@
+fbsplash-antix (0.2.2) unstable; urgency=medium
+
+  * Minor changes to 1920x1080.cfg themes 
+
+ -- anticapitalista <antix@operamail.com>  Wed, 27 Apr 2016 15:20:02 +0300
+
+fbsplash-antix (0.2.1) unstable; urgency=medium
+
+  * removed fbres
+  * symlink default to antix-rev-neutral-blue
+  * rc.local to match version in antiX-16 
+
+ -- anticapitalista <antix@operamail.com>  Thu, 21 Apr 2016 14:24:07 +0300
+
 fbsplash-antix (0.2.0) unstable; urgency=low
  
-  * Ready fo ship in antiX-15
+  * Ready for ship in antiX-15
   * Fix --auto mode so it doesn't run if framebuffer is still VESA 
 
  -- anticapitalista <antiX@operamail.com>  Tue, 16 Jun 2015 13:09:00 +0200
