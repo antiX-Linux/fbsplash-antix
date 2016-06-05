@@ -1,3 +1,9 @@
+fbsplash-antix (0.2.3) unstable; urgency=medium
+
+  * Changes to splash-term, rc.local 
+
+ -- anticapitalista <antix@operamail.com>  Sun, 05 Jun 2016 11:34:21 +0300
+
 fbsplash-antix (0.2.2) unstable; urgency=medium
 
   * Minor changes to 1920x1080.cfg themes 
