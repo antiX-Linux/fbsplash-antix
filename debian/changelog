@@ -1,3 +1,9 @@
+fbsplash-antix (0.2.5) unstable; urgency=medium
+
+  * No entried in tc.local 
+
+ -- anticapitalista <antix@operamail.com>  Wed, 08 Jun 2016 10:48:57 +0300
+
 fbsplash-antix (0.2.4) unstable; urgency=medium
 
   * Removed boot-log code from rc.local 
