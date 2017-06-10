@@ -1,7 +1,10 @@
 #!/bin/bash
 
-. /usr/lib/shell/lib-screen.sh
-. /usr/lib/shell/lib-grid.sh
+lib_dir=/usr/lib/shell
+loc_lib=./lib
+test -e $loc_lib/lib-screen.sh && lib_dir=$loc_lib
+. $lib_dir/lib-screen.sh
+. $lib_dir/lib-grid.sh
 
 splash_ctl=fbcondecor_ctl.static
 

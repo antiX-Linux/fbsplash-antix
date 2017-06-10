@@ -8,6 +8,8 @@ DEBUG_KEYS=0
 #FIXME:
 log_file=$ME.log
 
+trap on_exit EXIT
+
 case $(tty) in
     */pts/*) SCREEN_IN_VT=     ; TTY_OFF=0 ;;
           *) SCREEN_IN_VT=true ; TTY_OFF=1 ;;
@@ -111,8 +113,8 @@ screen_draw_titles() {
 
 screen_draw_box() {
     SCREEN_DID_BOX=
-    log1 box-style $SCREEN_BOX_STYLE
-    log1 box       "$SCREEN_BOX"
+    #log1 box-style $SCREEN_BOX_STYLE
+    #log1 box       "$SCREEN_BOX"
     [ -n "$SCREEN_BOX_STYLE" -a -n "$SCREEN_BOX" ] || return
     SCREEN_DID_BOX=true
     box $SCREEN_BOX_STYLE $SCREEN_BOX $SCREEN_BORDER_COLOR
@@ -134,7 +136,10 @@ screen_init() {
     SCREEN_BOX=
     [ $SCREEN_BORDER -gt 0 ] && SCREEN_BOX="1 1 $SCREEN_RAW_WIDTH $SCREEN_RAW_HEIGHT"
 
-    log "\n\n$bold$yellow>>>>>$cyan $ME started $(date) $yellow<<<<<$nc"
+    if [ -z "DID_INIT" ]; then
+        log "\n\n$bold$yellow>>>>>$cyan $ME started $(date) $yellow<<<<<$nc"
+        DID_INIT=true
+    fi
     log1 "v-height" $SCREEN_HEIGHT
     log1 "v-width" $SCREEN_WIDTH
 }
@@ -149,23 +154,28 @@ main_loop() {
         [ $DEBUG_KEYS -eq 2 ] && msg=$(printf "$key" | od -t x1 | head -n1 | sed 's/^0\+ //')
         db_msg "$msg"
 
+        key_callback $key && continue
+
         case $key in
             up|down|left|right|home|end) grid_nav $key         ;;
                A) clear; redraw                                ;;
                a) redraw                                       ;;
             [kK]) DEBUG_KEYS=$(( (DEBUG_KEYS + 1) % 3))        ;;
             [qQ]) log "Quiting $ME"; clear; exit               ;;
-            [sS]) db_msg "Screen size: %dx%d" $(stty size)     ;;
+               s) db_msg "Screen size: %dx%d" $(stty size)     ;;
+               S) do_bash_shell                                ;; 
             [dD]) grid_deactivate                              ;;
                C) toggle_center_labels                         ;;
                c) toggle_color                                 ;;
             [rR]) restart                                      ;;
             [xX]) grid_clear                                   ;;
-            [hH]) do_help                                      ;;
+           [hH?]) do_help                                      ;;
            enter) on_enter_                                    ;;
         esac
     done
 }
+
+key_callback() { return 1; }
 
 toggle_color() {
     local scheme=$COLOR_SCHEME
@@ -237,6 +247,16 @@ cruler() {
     done
 }
 
+lab_len() {
+    local len=$(str_len "$1")
+    if echo "$1" | grep -P -q "\e\[[0-9]+C"; then
+        local jump=$(echo "$1" | sed -r "s/.*\x1B\[([0-9]+)C.*/\1/")
+        echo $((len + jump - 4))
+    else
+        echo $len
+    fi
+}
+
 # Note, the 2nd regex helps shells that don't know about unicode
 # as long as sed is unicode-aware then you are okay.  Unfortunately
 # BusyBox sed doesn't work here.
@@ -265,7 +285,7 @@ ctext() {
 }
 
 cline() {
-    log "cline(\"$1\", \"$2$nc\")"
+    #log "cline(\"$1\", \"$2$nc\")"
     local y=$1 msg=$2 color=$3
     [ "$msg" ] || return
     msg=$(echo "$msg" | sed "s/<color>/$color/g")
@@ -299,7 +319,7 @@ box() {
 
     #return
     local x0=$1 y0=$2 width=$3 height=$4 color=$5
-    log "box($flag $x0 $y0 $width $height ${color}XX$nc)"
+    #log "box($flag $x0 $y0 $width $height ${color}XX$nc)"
 
     [ "$color" ] && printf "$nc$color"
 
@@ -335,8 +355,8 @@ get_key() {
     read -s -N1
     k1=$REPLY
     read -s -N2 -t 0.001 k2
-    read -s -N1 -t 0.001 k3
-    read -s -N1 -t 0.001 k4
+    read -s -N1 -t 0.001 k3 2>/dev/null
+    read -s -N1 -t 0.001 k4 2>/dev/null
     key=$k1$k2$k3$k4
 
     case $key in
@@ -394,6 +414,14 @@ log() {
     echo    $nc >&2
 }
 
+do_bash_shell() {
+    restore_tty
+    printf "${cyan}Use 'exit' or Ctrl-d to return to %s$nc\n" $ME
+    PS1="Bash> " bash 2>&1
+    hide_tty
+    redraw
+}
+
 do_help() {
     if [ -z "$HELP_PAGE" ]; then
         db_msg "No help page was set"
@@ -404,26 +432,21 @@ do_help() {
 
 do_command() {
     restore_tty
-    clear
     "$@"
-    clear
     hide_tty
     redraw
 }
 
 restore_tty() {
-    stty $ORIG_STTY
-    local y height=$(stty size | cut -d" " -f1)
-    y=$((height - 4))
-
-    printf "\e[$y;1H"
-    printf "$nc$cursor_on"
+    [ -n "$ORIG_STTY" ] && stty $ORIG_STTY
+    printf "$nc$clear$cursor_on"
+    printf "\e[1;1H"
 }
 
 hide_tty() {
-    [ "$ORIG_STTY" ] || ORIG_STTY=$(stty -g)
-    trap restore_tty EXIT
+    [ "$ORIG_STTY" ]    || ORIG_STTY=$(stty -g)
     [ "$SCREEN_IN_VT" ] || trap restart WINCH
+    clear
     stty cbreak -echo
     printf $cursor_off
 }
@@ -446,4 +469,9 @@ need_root() {
     exec sudo -p "$ME: Enter password for user %u: " "$0" "$@"
 }
 
+on_exit() {
+    restore_tty
+    printf "\e[1;1H"
+    printf "$cyan%s exited$nc\n" $ME
+}
 

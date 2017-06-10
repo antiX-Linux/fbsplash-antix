@@ -1,3 +1,9 @@
+fbsplash-antix (0.2.6) unstable; urgency=medium
+
+  * Updated shell libs to include cli-antix-cc
+
+ -- anticapitalista <antix@operamail.com>  Mon, 22 May 2017 16:52:58 +0300
+
 fbsplash-antix (0.2.5) unstable; urgency=medium
 
   * No entried in tc.local 
